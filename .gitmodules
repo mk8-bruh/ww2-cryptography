@@ -1,0 +1,3 @@
+[submodule "enigma/fluffi"]
+	path = enigma/fluffi
+	url = https://github.com/mk8-bruh/fluffi
