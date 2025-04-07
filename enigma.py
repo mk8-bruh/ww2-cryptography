@@ -289,7 +289,8 @@ class Main(ProgramState):
                     self.mode = "reflector"
             elif key == "space":
                 notches = [(n - self.cipher.rotors[p].position) % 26 for n in self.cipher.rotors[p].notches if n != self.cipher.rotors[p].position]
-                self.cipher.rotors[p].position = (min(notches) + self.cipher.rotors[p].position) % 26
+                if len(notches) > 0:
+                    self.cipher.rotors[p].position = (min(notches) + self.cipher.rotors[p].position) % 26
             elif key == "tab":
                 self.mode = "text"
                 self.scroll = -1
