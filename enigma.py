@@ -16,13 +16,13 @@ def wordWrap(text: str, width: int):
         lines += twrap(p, width)
     return lines
 
-# logic
-
 def ntol(n: int):
     return chr(65 + n % 26)
 
 def lton(l: str):
     return (ord(l[:1].upper()) - 65) % 26
+
+# logic
 
 class Rotor:
     def __init__(self, wiring: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", notches: str = "", position: str = "A", next: Rotor = None, name: str = None):
