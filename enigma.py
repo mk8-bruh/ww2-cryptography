@@ -56,7 +56,9 @@ rotors = {
 	"5": Rotor("VZBRGITYUPSDNHLXAWMJQOFECK", "A",  name = "V"   ),
 	"6": Rotor("JPGVOUMFYQBENHZRDKASXLICTW", "AN", name = "VI"  ),
 	"7": Rotor("NZJHGRCXMYSWBOUFAIVLPEKQDT", "AN", name = "VII" ),
-	"8": Rotor("FKQHTLXOCBJSPDZRAMEWNIUYGV", "AN", name = "VIII")
+	"8": Rotor("FKQHTLXOCBJSPDZRAMEWNIUYGV", "AN", name = "VIII"),
+
+    "0": Rotor(name = "NaN")
 }
 
 class Swapper:
@@ -248,11 +250,11 @@ class Main(ProgramState):
                 self.scroll += 1
             elif key == "backspace":
                 if len(self.plaintext) > 0:
-                    self.plaintext = self.plaintext[:-1]
-                    self.ciphertext = self.ciphertext[:-1]
-                    if len(self.rotor_stack) > 0:
+                    if self.plaintext[-1] in ALPHABET and len(self.rotor_stack) > 0:
                         for (i, p) in enumerate(self.rotor_stack.pop(-1)):
                             self.cipher.rotors[i].position = p
+                    self.plaintext = self.plaintext[:-1]
+                    self.ciphertext = self.ciphertext[:-1]
                 self.scroll = -1
             elif key == "tab":
                 self.mode = "rotor"
