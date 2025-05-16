@@ -1,3 +1,5 @@
+# EXTERNAL DEPENDENCIES: winter (https://github.com/mk8-bruh/winter.py)
+
 from __future__ import annotations
 from winter import *
 from math import floor, ceil
@@ -13,6 +15,8 @@ def wordWrap(text: str, width: int):
     for p in paragraphs:
         lines += twrap(p, width)
     return lines
+
+# logic
 
 def ntol(n: int):
     return chr(65 + n % 26)

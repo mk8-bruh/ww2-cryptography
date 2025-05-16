@@ -1,3 +1,5 @@
+# EXTERNAL DEPENDENCIES: svgwrite
+
 import math
 from svgwrite import Drawing
 

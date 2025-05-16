@@ -1,3 +1,5 @@
+# EXTERNAL DEPENDENCIES: winter (https://github.com/mk8-bruh/winter.py)
+
 from __future__ import annotations
 from winter import *
 from math import floor, ceil
@@ -13,7 +15,8 @@ def wordWrap(text: str, width: int):
         lines += [""] if p == "" else wrap(p, width)
     return lines
 
-# Baudot code implementation
+# logic
+
 BAUDOT = {
     'A': '11000',
     'B': '10011',
@@ -73,35 +76,31 @@ class LorenzWheel:
 
 class LorenzSZ:
     def __init__(self):
-        # Chi wheels (5 wheels)
         self.chi_wheels = [
-            LorenzWheel(41, name="χ1"),
-            LorenzWheel(31, name="χ2"),
-            LorenzWheel(29, name="χ3"),
-            LorenzWheel(26, name="χ4"),
-            LorenzWheel(23, name="χ5")
+            LorenzWheel(41, name = "χ41"),
+            LorenzWheel(31, name = "χ31"),
+            LorenzWheel(29, name = "χ29"),
+            LorenzWheel(26, name = "χ26"),
+            LorenzWheel(23, name = "χ23")
         ]
-        # Psi wheels (5 wheels)
         self.psi_wheels = [
-            LorenzWheel(43, name="ψ1"),
-            LorenzWheel(47, name="ψ2"),
-            LorenzWheel(51, name="ψ3"),
-            LorenzWheel(53, name="ψ4"),
-            LorenzWheel(59, name="ψ5")
+            LorenzWheel(43, name = "ψ43"),
+            LorenzWheel(47, name = "ψ47"),
+            LorenzWheel(51, name = "ψ51"),
+            LorenzWheel(53, name = "ψ53"),
+            LorenzWheel(59, name = "ψ59")
         ]
-        # Motor wheels (2 wheels)
         self.motor_wheels = [
-            LorenzWheel(37, name="M37"),
-            LorenzWheel(61, name="M61")
+            LorenzWheel(37, name = "M37"),
+            LorenzWheel(61, name = "M61")
         ]
-        self.current_wheel_set = "chi"  # "chi", "psi", or "motor"
+        self.current_wheel_set = "chi"  # "chi" / "psi" / "motor"
         self.selected_wheel = 0
         self.plaintext = ""
         self.ciphertext = ""
         self.scroll = 0
     
     def step_wheels(self):
-        # Step all wheels (simplified stepping)
         for (i, wheel) in enumerate(self.chi_wheels):
             wheel.step()
         for (i, wheel) in enumerate(self.psi_wheels):
@@ -115,19 +114,16 @@ class LorenzSZ:
         if char not in BAUDOT:
             return char
         
-        # Get current pins from all wheels
         chi_bits = [wheel.current_pin() for wheel in self.chi_wheels]
         psi_bits = [wheel.current_pin() for wheel in self.psi_wheels]
         
-        # Convert character to Baudot
         baudot = BAUDOT[char]
         encrypted = ""
 
-        # XOR all bits
         for i in range(5):
             chi = chi_bits[i]
             psi = psi_bits[i]
-            psi = (0 if psi else 1) # invert psi
+            psi = (0 if psi else 1)
             original_bit = int(baudot[i])
             encrypted += str(original_bit ^ chi ^ psi)
         
@@ -144,14 +140,15 @@ class LorenzSZ:
             self.ciphertext += char
         self.scroll = -1
 
-# Interface
+# interface
+
 window = Program(41, 13, "LORENZ SZ", killKey="escape")
 
 class Main(ProgramState):
     def __init__(self):
         self.machine = LorenzSZ()
-        self.mode = "text"  # "text" or "wheels"
-        self.edit_mode = "pins"  # "pins" or "jump"
+        self.mode = "text"  # "text" / "wheels"
+        self.edit_mode = "pins"  # "pins" / "jump"
         self.jump_buffer = ""
         self.scroll = 0
 
@@ -206,7 +203,6 @@ class Main(ProgramState):
                 if selected_wheel > 0:
                     self.machine.selected_wheel -= 1
                 else:
-                    # Cycle wheel sets: motor -> psi -> chi -> motor
                     if wheel_set == "chi":
                         self.machine.current_wheel_set = "motor"
                         wheels = self.machine.motor_wheels
@@ -215,7 +211,7 @@ class Main(ProgramState):
                         self.machine.current_wheel_set = "chi"
                         wheels = self.machine.chi_wheels
                         self.machine.selected_wheel = len(wheels) - 1
-                    else:  # motor
+                    else:
                         self.machine.current_wheel_set = "psi"
                         wheels = self.machine.psi_wheels
                         self.machine.selected_wheel = len(wheels) - 1
@@ -224,7 +220,6 @@ class Main(ProgramState):
                 if selected_wheel < len(wheels) - 1:
                     self.machine.selected_wheel += 1
                 else:
-                    # Cycle wheel sets: chi -> psi -> motor -> chi
                     if wheel_set == "chi":
                         self.machine.current_wheel_set = "psi"
                         wheels = self.machine.psi_wheels
@@ -233,17 +228,17 @@ class Main(ProgramState):
                         self.machine.current_wheel_set = "motor"
                         wheels = self.machine.motor_wheels
                         self.machine.selected_wheel = 0
-                    else:  # motor
+                    else:
                         self.machine.current_wheel_set = "chi"
                         wheels = self.machine.chi_wheels
                         self.machine.selected_wheel = 0
             elif key == "up":
                 current_wheel.position = (current_wheel.position - 1) % current_wheel.size
-                self.edit_mode = "pins"  # Exit jump mode when manually moving
+                self.edit_mode = "pins"
                 self.jump_buffer = ""
             elif key == "down":
                 current_wheel.position = (current_wheel.position + 1) % current_wheel.size
-                self.edit_mode = "pins"  # Exit jump mode when manually moving
+                self.edit_mode = "pins"
                 self.jump_buffer = ""
             elif key == "space":
                 self.jump_buffer = ""
@@ -254,7 +249,6 @@ class Main(ProgramState):
             elif key == "tab":
                 self.mode = "text"
                 self.scroll = -1
-                # Reset jump state when leaving wheel mode
                 self.edit_mode = "pins"
                 self.jump_buffer = ""
             elif self.edit_mode == "pins":
@@ -308,7 +302,6 @@ class Main(ProgramState):
     def Draw(self):
         Terminal.ResetStyle()
         
-        # Draw wheel editor
         wheel_set = self.machine.current_wheel_set
         wheels = []
         if wheel_set == "chi":
@@ -323,24 +316,20 @@ class Main(ProgramState):
             Terminal.SetCursorPosition(2, 1 + row)
             for i, wheel in enumerate(wheels):
                 pos = wheel.position
-                # Display 3 pins: previous, current, next
                 prev_pin = wheel.pins[(pos - 1) % wheel.size]
                 curr_pin = wheel.pins[pos]
                 next_pin = wheel.pins[(pos + 1) % wheel.size]
                 
-                # Highlight current wheel and current pin
                 is_selected_wheel = (i == selected_wheel)
                 is_center_pin = (row == 2)
                 
                 pin_str = ""
 
-                # Apply styling
                 if self.mode == "wheels" and is_selected_wheel:
                     pin_str += Terminal.SetColor("yellow", gen = True)
                     if is_center_pin and self.edit_mode == "pins":
                         pin_str += Terminal.EnableStyle("invert", gen = True)
                 
-                # Pin display
                 if row == 0:
                     pin_str += f"{wheel.name}"
                 elif row == 1:
@@ -357,16 +346,13 @@ class Main(ProgramState):
                 Terminal.Print(centerString(pin_str, (window.width - 1) // len(wheels), "-" if row == 2 else " "))
                 Terminal.ResetStyle()
         
-        # Text display
         Terminal.SetColor("yellow")
-        # Ciphertext
         for i in range(5):
             Terminal.SetCursorPosition(22, 9 + i)
             Terminal.Print(" " * 20)
         for (i, line) in enumerate(wordWrap(self.machine.ciphertext, 20)[self.scroll : self.scroll + 5]):
             Terminal.SetCursorPosition(22, 9 + i)
             Terminal.Print(line)
-        # Plaintext
         for i in range(5):
             Terminal.SetCursorPosition(1, 9 + i)
             Terminal.Print(" " * 20)
