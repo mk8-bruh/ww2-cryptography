@@ -132,7 +132,7 @@ ALPHABET = [chr(i + 65) for i in range(26)]
 
 class Main(ProgramState):
     def __init__(self):
-        self.mode = "text"  # one of: 'text', 'rotor', 'plugboard', 'reflector'
+        self.mode = "text"  # 'text' / 'rotor' / 'plugboard' / 'reflector'
         
         self.plaintext = ""
         self.ciphertext = ""
@@ -140,8 +140,8 @@ class Main(ProgramState):
         
         self.rotor_cursor = 0
         
-        self.plugboard_cursor = 0  # selected pair index
-        self.plugboard_input = ""  # building a new pair
+        self.plugboard_cursor = 0
+        self.plugboard_input = ""
         
         self.cipher = Enigma([rotors["1"].Instantiate(), rotors["2"].Instantiate(), rotors["3"].Instantiate()], reflectors["A"].Instantiate(), Swapper())
         self.rotor_stack = []
