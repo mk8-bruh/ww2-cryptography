@@ -1,4 +1,4 @@
-Vytvorené v rámci projektu **Mier nie je samozrejmosť** pri príležitosti 80. výročie konca 2. svetovej vojny na GJH
+Vytvorené v rámci projektu ***Mier nie je samozrejmosť*** pri príležitosti 80. výročie konca 2. svetovej vojny na GJH
 
 # Simulácie
 
