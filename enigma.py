@@ -327,14 +327,43 @@ class Main(ProgramState):
             pairs = self.cipher.plugboard.pairs
             pc = len(pairs)
             l, c = p // 5, p % 5
-            lc = pc + (-pc % 5)
+            lc = ceil(pc / 5)
             ll = [min(pc - 5 * i, 5) for i in range(lc)]
             if key == "up":
                 if l > 0:
-                    p = p -   c - 5  + floor((1/2 - (ll[l] - 1) / 10 + c/4) * (ll[l - 1] - 1) + 0.5)
+                    #p = p -   c - 5  + floor((1/2 - (ll[l] - 1) / 10 + c/4) * (ll[l - 1] - 1) + 0.5)
+                    if ll[l] == 5:
+                        p -= 5
+                    elif ll[l] == 4:
+                        if c == 0 or c == 1:
+                            p -= 4
+                        elif c == 2 or c == 3:
+                            p -= 5
+                    elif ll[l] == 3:
+                        p -= 4
+                    else:
+                        p -= 3 + (c % 2)
             elif key == "down":
                 if l < lc - 1:
-                    p = p + (-c % 5) + floor((1/2 - (ll[l] - 1) / 10 + c/4) * (ll[l + 1] - 1) + 0.5)
+                    #p = p + (-c % 5) + floor((1/2 - (ll[l] - 1) / 10 + c/4) * (ll[l + 1] - 1) + 0.5)
+                    if ll[l + 1] == 5:
+                        p += 5
+                    elif ll[l + 1] == 4:
+                        if c == 4:
+                            p += 4
+                        else:
+                            p += 5
+                    elif ll[l + 1] == 3:
+                        if c == 0:
+                            p += 5
+                        elif c == 4:
+                            p += 3
+                        else:
+                            p += 4
+                    else:
+                        p = 5 * (l + 1)
+                        if ll[l + 1] == 2 and c > 2:
+                            p += 1
             elif key == "left":
                 if c > 0:
                     p -= 1
